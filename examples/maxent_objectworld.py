@@ -34,12 +34,21 @@ def main(grid_size, discount, n_objects, n_colours, n_trajectories, epochs,
     ow = objectworld.Objectworld(grid_size, n_objects, n_colours, wind,
                                  discount)
     ground_r = np.array([ow.reward(s) for s in range(ow.n_states)])
+    print("ow.n_states", ow.n_states)
+    print("ow.n_actions", ow.n_actions)
+    print("ow.transition_probability", ow.transition_probability, len(ow.transition_probability), len(ow.transition_probability[0]), len(ow.transition_probability[0][0]))
+    print("ground_r", ground_r, len(ground_r))
+    print("ow.discount", ow.discount)
+
     policy = find_policy(ow.n_states, ow.n_actions, ow.transition_probability,
                          ground_r, ow.discount, stochastic=False)
     trajectories = ow.generate_trajectories(n_trajectories,
                                             trajectory_length,
                                             lambda s: policy[s])
+    print(trajectories)
     feature_matrix = ow.feature_matrix(discrete=False)
+    print("feature_matrix", feature_matrix, len(feature_matrix), len(feature_matrix[0]))
+
     r = maxent.irl(feature_matrix, ow.n_actions, discount,
         ow.transition_probability, trajectories, epochs, learning_rate)
 
