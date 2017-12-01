@@ -36,6 +36,14 @@ class Lindaworld():
         for traj in trajectories:
             if len(traj) > max_length_traj:
                 max_length_traj = len(traj)
+            ## Remove CurrentNode_none and ClosestNode_* with current not none
+            for i in range(len(traj)):
+                traj[i] = list(traj[i])
+                if "CurrentNode_none" in traj[i][0]:
+                    traj[i][0].remove("CurrentNode_none")
+                else:
+                    traj[i][0] = set([x for x in traj[i][0] if "CurrentNode" in x])
+
             for (state, action) in traj:
                 state_set.add(" ".join(state))
                 action_set.add(" ".join(action))

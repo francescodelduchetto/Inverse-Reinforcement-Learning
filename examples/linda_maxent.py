@@ -83,71 +83,72 @@ def main(discount, epochs, learning_rate):
     map_v = "/map"
     marker_array = MarkerArray()
     for index, node in enumerate(top_map.nodes):
-        print node.name
-
-        #print node.pose
 
         # get the corresponding state index
         currentstate_index = None
         closeststate_index = None
+        current_marker_id = None
+        closest_marker_id = None
         for i, state in enumerate(lw.state_list):
             if "CurrentNode_" + node.name in state.split(" "):
                 currentstate_index = i
                 current_marker_id = int(node.name.replace("WayPoint", ""))
                 print "current>>>> ", state
-            if "CurrentNode_none" in state.split(" ") and "ClosestNode_" + node.name in state.split(" "):
+            if "ClosestNode_" + node.name in state.split(" "):
                 closeststate_index = i
                 closest_marker_id = int(node.name.replace("WayPoint", "")) * 100
                 print "closest>>>> ", state
 
         # Current state marker
-        current_box_marker = Marker()
-        if currentstate_index is not None:
-            # get heatmap color
-            r, g, b = rgb(min_reward, max_reward, reward[currentstate_index])
-            current_box_marker.text = str(reward[currentstate_index])
-        else:
-            current_box_marker.text = "0"
-            r = g = b = 0.0
-        current_box_marker.header.frame_id = map_v
-        current_box_marker.type = Marker.CYLINDER
-        current_box_marker.action = Marker.ADD
-        current_box_marker.id = current_marker_id
-        current_box_marker.scale.x = 0.5
-        current_box_marker.scale.y = 0.5
-        current_box_marker.scale.z = 0.1
-        current_box_marker.pose = node.pose
-        current_box_marker.color.r = r
-        current_box_marker.color.g = g
-        current_box_marker.color.b = b
-        current_box_marker.color.a = 1.0
+        if current_marker_id is not None:
+            current_box_marker = Marker()
+            if currentstate_index is not None:
+                # get heatmap color
+                r, g, b = rgb(min_reward, max_reward, reward[currentstate_index])
+                current_box_marker.text = str(reward[currentstate_index])
+            else:
+                current_box_marker.text = "0"
+                r = g = b = 0.0
+            current_box_marker.header.frame_id = map_v
+            current_box_marker.type = Marker.CYLINDER
+            current_box_marker.action = Marker.ADD
+            current_box_marker.id = current_marker_id
+            current_box_marker.scale.x = 0.5
+            current_box_marker.scale.y = 0.5
+            current_box_marker.scale.z = 0.1
+            current_box_marker.pose = node.pose
+            current_box_marker.color.r = r
+            current_box_marker.color.g = g
+            current_box_marker.color.b = b
+            current_box_marker.color.a = 1.0
 
-        marker_array.markers.append(current_box_marker)
+            marker_array.markers.append(current_box_marker)
 
-        # Closest state marker
-        closest_box_marker = Marker()
-        if closeststate_index is not None:
-            # get heatmap color
-            r, g, b = rgb(min_reward, max_reward, reward[closeststate_index])
-            closest_box_marker.text = str(reward[closeststate_index])
-            #print reward[closeststate_index]
-        else:
-            closest_box_marker.text = "0"
-            r = g = b = 0.0
-        closest_box_marker.header.frame_id = map_v
-        closest_box_marker.type = Marker.CYLINDER
-        closest_box_marker.action = Marker.ADD
-        closest_box_marker.id = closest_marker_id
-        closest_box_marker.scale.x = 2
-        closest_box_marker.scale.y = 2
-        closest_box_marker.scale.z = 0.01
-        closest_box_marker.pose = node.pose
-        closest_box_marker.color.r = r
-        closest_box_marker.color.g = g
-        closest_box_marker.color.b = b
-        closest_box_marker.color.a = 0.7
+        if closest_marker_id is not None:
+            # Closest state marker
+            closest_box_marker = Marker()
+            if closeststate_index is not None:
+                # get heatmap color
+                r, g, b = rgb(min_reward, max_reward, reward[closeststate_index])
+                closest_box_marker.text = str(reward[closeststate_index])
+                #print reward[closeststate_index]
+            else:
+                closest_box_marker.text = "0"
+                r = g = b = 0.0
+            closest_box_marker.header.frame_id = map_v
+            closest_box_marker.type = Marker.CYLINDER
+            closest_box_marker.action = Marker.ADD
+            closest_box_marker.id = closest_marker_id
+            closest_box_marker.scale.x = 2
+            closest_box_marker.scale.y = 2
+            closest_box_marker.scale.z = 0.01
+            closest_box_marker.pose = node.pose
+            closest_box_marker.color.r = r
+            closest_box_marker.color.g = g
+            closest_box_marker.color.b = b
+            closest_box_marker.color.a = 0.7
 
-        marker_array.markers.append(closest_box_marker)
+            marker_array.markers.append(closest_box_marker)
 
     #print marker_array
     rew_markers_publisher.publish(marker_array)
